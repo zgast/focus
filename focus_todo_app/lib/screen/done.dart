@@ -31,7 +31,7 @@ class _DonePageState extends State<DonePage> {
                   margin: const EdgeInsets.only(left: 150, right: 150, top: 50),
                   child: AdwPreferencesGroup(
                     title: "Tasks",
-                    description: "all Tasks",
+                    description: "done tasks",
                     children: [
                       for (var item in _map.entries.toList())
                         Container(
@@ -44,16 +44,14 @@ class _DonePageState extends State<DonePage> {
                                       (MediaQuery.of(context).size.width - 840),
                                   child: Text(
                                     "Name:    ${item.key}",
-                                    style: const TextStyle(
-                                        fontSize: 15, color: Colors.white),
+                                    style: const TextStyle(fontSize: 15),
                                   ),
                                 ),
                                 Container(
                                   width: 156,
                                   child: Text(
                                     "Minutes:    ${item.value}",
-                                    style: const TextStyle(
-                                        fontSize: 15, color: Colors.white),
+                                    style: const TextStyle(fontSize: 15),
                                   ),
                                 ),
                               ],

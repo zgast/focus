@@ -20,12 +20,10 @@
 
 xorg, xrandr
 
-
-
 ## installation
 
 ```bash
-wget https://github.com/zgast/focus/releases/download/1.0/focus.tar.xz
+wget https://github.com/zgast/focus/releases/download/1.1/focus.tar.xz
 
 tar -xf ./focus.tar.xz
 

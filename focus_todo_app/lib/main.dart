@@ -6,6 +6,7 @@ import 'package:focus_todo_app/screen/home.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Must add this line.
+
   runApp(MyApp());
 
   doWhenWindowReady(() {
@@ -25,20 +26,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
-        valueListenable: themeNotifier,
-        builder: (_, ThemeMode currentMode, __) {
-          print(currentMode);
-          return MaterialApp(
-              color: Colors.black,
-              theme: AdwaitaThemeData.dark(),
-              darkTheme: AdwaitaThemeData.dark(),
-              debugShowCheckedModeBanner: false,
-              home: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: const MyHomePage(
-                    title: '2',
-                  )),
-              themeMode: currentMode);
-        });
+      valueListenable: themeNotifier,
+      builder: (_, ThemeMode currentMode, __) {
+        return MaterialApp(
+          theme: AdwaitaThemeData.light(),
+          darkTheme: AdwaitaThemeData.dark(),
+          debugShowCheckedModeBanner: false,
+          home: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: const MyHomePage(
+                title: '2',
+              )),
+          themeMode: ThemeMode.system,
+        );
+      },
+    );
   }
 }

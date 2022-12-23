@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:libadwaita/libadwaita.dart';
 
 import '../db/json_db.dart';
@@ -37,7 +38,7 @@ class _TaskPageState extends State<TaskPage> {
                 margin: const EdgeInsets.only(left: 150, right: 150, top: 50),
                 child: AdwPreferencesGroup(
                   title: "Tasks",
-                  description: "all Tasks",
+                  description: "all tasks",
                   children: [
                     for (var item in _map.entries.toList())
                       Container(
@@ -50,16 +51,14 @@ class _TaskPageState extends State<TaskPage> {
                                     (MediaQuery.of(context).size.width - 840),
                                 child: Text(
                                   "Name:    ${item.key}",
-                                  style: const TextStyle(
-                                      fontSize: 15, color: Colors.white),
+                                  style: const TextStyle(fontSize: 15),
                                 ),
                               ),
                               Container(
                                 width: 156,
                                 child: Text(
                                   "Minutes:    ${item.value}",
-                                  style: const TextStyle(
-                                      fontSize: 15, color: Colors.white),
+                                  style: const TextStyle(fontSize: 15),
                                 ),
                               ),
                               Container(
@@ -96,8 +95,7 @@ class _TaskPageState extends State<TaskPage> {
                                         }),
                                     child: const Text(
                                       "do",
-                                      style: TextStyle(
-                                          fontSize: 15, color: Colors.white),
+                                      style: TextStyle(fontSize: 15),
                                     ),
                                   )),
                             ],
@@ -110,8 +108,7 @@ class _TaskPageState extends State<TaskPage> {
                             margin: const EdgeInsets.all(10),
                             child: const Text(
                               "Name:",
-                              style:
-                                  TextStyle(fontSize: 15, color: Colors.white),
+                              style: TextStyle(fontSize: 15),
                             ),
                           ),
                           SizedBox(
@@ -126,8 +123,7 @@ class _TaskPageState extends State<TaskPage> {
                             margin: const EdgeInsets.all(10),
                             child: const Text(
                               "Minutes:",
-                              style:
-                                  TextStyle(fontSize: 15, color: Colors.white),
+                              style: TextStyle(fontSize: 15),
                             ),
                           ),
                           SizedBox(
@@ -135,6 +131,11 @@ class _TaskPageState extends State<TaskPage> {
                             width: 80,
                             child: AdwTextFieldCostum(
                               initialValue: "",
+                              inputFormatter: <TextInputFormatter>[
+                                // for below version 2 use this
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              keyboardType: TextInputType.number,
                               controller: controllerMinutes,
                             ),
                           ),
@@ -150,8 +151,7 @@ class _TaskPageState extends State<TaskPage> {
                                     }),
                                 child: const Text(
                                   "add",
-                                  style: TextStyle(
-                                      fontSize: 15, color: Colors.white),
+                                  style: TextStyle(fontSize: 15),
                                 ),
                               )),
                         ],

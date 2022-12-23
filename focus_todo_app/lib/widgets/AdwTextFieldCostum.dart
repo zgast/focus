@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AdwTextFieldCostum extends StatelessWidget {
   const AdwTextFieldCostum({
@@ -10,6 +11,7 @@ class AdwTextFieldCostum extends StatelessWidget {
     this.prefixIcon,
     this.onSubmitted,
     this.initialValue,
+    this.inputFormatter,
     this.autofocus = false,
   }) : super(key: key);
 
@@ -18,6 +20,8 @@ class AdwTextFieldCostum extends StatelessWidget {
 
   /// To be run when you submit this field using Enter key
   final ValueChanged<String>? onSubmitted;
+
+  final List<TextInputFormatter>? inputFormatter;
 
   /// The controller for the field
   final TextEditingController? controller;
@@ -45,10 +49,10 @@ class AdwTextFieldCostum extends StatelessWidget {
       autofocus: autofocus,
       onFieldSubmitted: onSubmitted,
       keyboardType: keyboardType,
+      inputFormatters: inputFormatter,
       maxLines: null,
       minLines: null,
-      style: TextStyle(
-          fontWeight: FontWeight.normal, color: Colors.white, fontSize: 15),
+      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
       expands: true, // Setting this attribute to true does the trick
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),

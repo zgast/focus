@@ -33,13 +33,6 @@ void main(List<String> args) async {
     positionY =
         (int.parse(xrandrOptions[2])) + (int.parse(res[1]) - (150 + 50));
 
-    WindowOptions windowOptions = const WindowOptions(
-      center: true,
-      backgroundColor: Colors.transparent,
-      skipTaskbar: false,
-      titleBarStyle: TitleBarStyle.hidden,
-    );
-
     windowManager.setAlwaysOnTop(true);
     windowManager.setOpacity(1);
     windowManager.setMinimumSize(const Size(500, 50));
@@ -68,7 +61,7 @@ class MyApp extends StatelessWidget {
         valueListenable: themeNotifier,
         builder: (_, ThemeMode currentMode, __) {
           return MaterialApp(
-              theme: AdwaitaThemeData.dark(),
+              theme: AdwaitaThemeData.light(),
               darkTheme: AdwaitaThemeData.dark(),
               debugShowCheckedModeBanner: false,
               home: ClipRRect(
@@ -78,7 +71,7 @@ class MyApp extends StatelessWidget {
                   title: '2',
                 ),
               ),
-              themeMode: currentMode);
+              themeMode: ThemeMode.system);
         });
   }
 }
@@ -160,9 +153,7 @@ class _MyHomePageState extends State<MyHomePage> with WindowListener {
                     child: Text(
                       task,
                       style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white),
+                          fontWeight: FontWeight.bold, fontSize: 20),
                     )),
                 Container(
                     margin: const EdgeInsets.only(left: 2),
@@ -170,9 +161,7 @@ class _MyHomePageState extends State<MyHomePage> with WindowListener {
                       "${(_start / 60).toInt()}:" +
                           "${_start % 60}".padLeft(2, "0"),
                       style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.white),
+                          fontSize: 20, fontWeight: FontWeight.w300),
                     )),
               ],
             ),
@@ -183,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage> with WindowListener {
                   onPressed: (() => {print("done"), exit(0)}),
                   child: const Text(
                     "✓",
-                    style: TextStyle(fontSize: 16, color: Colors.white),
+                    style: TextStyle(fontSize: 16),
                   ))),
         ],
       ),
