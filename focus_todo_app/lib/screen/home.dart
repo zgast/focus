@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:focus_todo_app/screen/done.dart';
+import 'package:focus_todo_app/screen/tasks.dart';
 import 'package:libadwaita/libadwaita.dart';
 import 'package:libadwaita_bitsdojo/libadwaita_bitsdojo.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
-import '../AdwTextFieldCostum.dart';
+import '../db/json_db.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -15,114 +18,19 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var _currentIndex;
-  var _map = new Map();
+
+  @override
+  void initState() {
+    DB.readIn();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final controllerName = TextEditingController();
-    final controllerMinutes = TextEditingController();
-
     return AdwScaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-                margin: const EdgeInsets.only(left: 150, right: 150, top: 50),
-                child: AdwPreferencesGroup(
-                  title: "Tasks",
-                  description: "all Tasks",
-                  children: [
-                    for (var item in _map.entries.toList())
-                      Container(
-                          margin: const EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Name:  ${item.key}",
-                                style: const TextStyle(
-                                    fontSize: 15, color: Colors.white),
-                              ),
-                              Text(
-                                "Minutes:  ${item.value}",
-                                style: const TextStyle(
-                                    fontSize: 15, color: Colors.white),
-                              ),
-                              Container(
-                                  margin: EdgeInsets.only(left: 20),
-                                  child: AdwButton(
-                                    onPressed: (() => {
-                                          setState(() {
-                                            _map[controllerName.text] =
-                                                controllerMinutes.text;
-                                          })
-                                        }),
-                                    child: const Text(
-                                      "do",
-                                      style: TextStyle(
-                                          fontSize: 15, color: Colors.white),
-                                    ),
-                                  )),
-                            ],
-                          )),
-                    Container(
-                      margin: const EdgeInsets.all(10),
-                      child: Row(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.all(10),
-                            child: const Text(
-                              "Name:",
-                              style:
-                                  TextStyle(fontSize: 15, color: Colors.white),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 30,
-                            width: (MediaQuery.of(context).size.width - 903),
-                            child: AdwTextFieldCostum(
-                              initialValue: "",
-                              controller: controllerName,
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.all(10),
-                            child: const Text(
-                              "Minutes:",
-                              style:
-                                  TextStyle(fontSize: 15, color: Colors.white),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 30,
-                            width: 80,
-                            child: AdwTextFieldCostum(
-                              initialValue: "",
-                              controller: controllerMinutes,
-                            ),
-                          ),
-                          Container(
-                              margin: EdgeInsets.only(left: 20),
-                              child: AdwButton(
-                                onPressed: (() => {
-                                      setState(() {
-                                        _map[controllerName.text] =
-                                            controllerMinutes.text;
-                                      })
-                                    }),
-                                child: const Text(
-                                  "add",
-                                  style: TextStyle(
-                                      fontSize: 15, color: Colors.white),
-                                ),
-                              )),
-                        ],
-                      ),
-                    )
-                  ],
-                ))
-          ],
-        ),
+      body: AdwViewStack(
+        animationDuration: const Duration(milliseconds: 100),
+        index: _currentIndex,
+        children: const [TaskPage(title: "title"), DonePage(title: "title")],
       ),
       actions: AdwActions().bitsdojo,
       flap: (isDrawer) => AdwSidebar(
@@ -130,9 +38,11 @@ class _MyHomePageState extends State<MyHomePage> {
         isDrawer: false,
         children: const [
           AdwSidebarItem(
+            leading: Icon(LucideIcons.clipboardList),
             label: 'Tasks',
           ),
           AdwSidebarItem(
+            leading: Icon(LucideIcons.clipboardCheck),
             label: 'Done',
           ),
         ],

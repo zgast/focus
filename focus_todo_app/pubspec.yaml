@@ -40,6 +40,7 @@ dependencies:
   libadwaita_bitsdojo: ^0.5.5
   bitsdojo_window: ^0.1.5
   window_manager: ^0.2.8
+  lucide_icons: ^0.104.0
 
 
 dev_dependencies:

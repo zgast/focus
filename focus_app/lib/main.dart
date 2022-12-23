@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:adwaita/adwaita.dart';
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:libadwaita/libadwaita.dart';
 import 'package:window_manager/window_manager.dart';
@@ -10,29 +11,50 @@ var minutes = 0;
 var task = "";
 
 void main(List<String> args) async {
-  minutes = int.parse(args[0]) * 60 + 10;
+  if (args.length < 2) {
+    exit(1);
+  }
+  minutes = int.parse(args[0]) * 60;
   task = args[1];
 
   WidgetsFlutterBinding.ensureInitialized();
   // Must add this line.
   await windowManager.ensureInitialized();
 
-  WindowOptions windowOptions = WindowOptions(
-    center: true,
-    backgroundColor: Colors.transparent,
-    skipTaskbar: false,
-    titleBarStyle: TitleBarStyle.hidden,
-  );
+  Process.run("/opt/focus/getMonitor.sh", []).then((result) {
+    double positionX = 0;
+    double positionY = 0;
 
-  windowManager.setAlwaysOnTop(true);
-  windowManager.setOpacity(1);
-  windowManager.setMinimumSize(Size(500, 50));
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.show();
-    await windowManager.focus();
+    String xrandr = result.stdout as String;
+    var xrandrOptions = xrandr.split("+");
+    var res = xrandrOptions[0].split("x");
+
+    positionX = (((int.parse(res[0])) / 2) + int.parse(xrandrOptions[1])) - 250;
+    positionY =
+        (int.parse(xrandrOptions[2])) + (int.parse(res[1]) - (150 + 50));
+
+    WindowOptions windowOptions = const WindowOptions(
+      center: true,
+      backgroundColor: Colors.transparent,
+      skipTaskbar: false,
+      titleBarStyle: TitleBarStyle.hidden,
+    );
+
+    windowManager.setAlwaysOnTop(true);
+    windowManager.setOpacity(1);
+    windowManager.setMinimumSize(const Size(500, 50));
+
+    doWhenWindowReady(() {
+      const initialSize = Size(500, 50);
+      appWindow.size = initialSize;
+      appWindow.minSize = initialSize;
+      appWindow.maxSize = initialSize;
+      appWindow.position = new Offset(positionX, positionY);
+      appWindow.show();
+    });
+
+    runApp(MyApp());
   });
-
-  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -45,14 +67,16 @@ class MyApp extends StatelessWidget {
     return ValueListenableBuilder<ThemeMode>(
         valueListenable: themeNotifier,
         builder: (_, ThemeMode currentMode, __) {
-          print(currentMode);
           return MaterialApp(
               theme: AdwaitaThemeData.dark(),
               darkTheme: AdwaitaThemeData.dark(),
               debugShowCheckedModeBanner: false,
-              home: MyHomePage(
-                themeNotifier: themeNotifier,
-                title: '2',
+              home: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: MyHomePage(
+                  themeNotifier: themeNotifier,
+                  title: '2',
+                ),
               ),
               themeMode: currentMode);
         });
@@ -72,31 +96,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with WindowListener {
-  double width = 0;
-  double height = 0;
-
   late Timer _timer;
-  int _start = 10;
+  int _start = 0;
 
   @override
   void initState() {
     windowManager.addListener(this);
-    Process.run("/home/markus/Documents/GitHub/focus_app/getMonitor.sh", [])
-        .then((result) {
-      String xrandr = result.stdout as String;
-      var xrandrOptions = xrandr.split("+");
-      var res = xrandrOptions[0].split("x");
+    _start = minutes;
 
-      width = (((int.parse(res[0])) / 2) + int.parse(xrandrOptions[1])) -
-          MediaQuery.of(context).size.width / 2;
-      height = (int.parse(xrandrOptions[2]) +
-          (int.parse(res[1]) - (120 + MediaQuery.of(context).size.height)));
-
-      print("$width : $height");
-      _start = minutes;
-      startTimer();
-      super.initState();
-    });
+    startTimer();
+    super.initState();
   }
 
   void startTimer() {
@@ -107,6 +116,8 @@ class _MyHomePageState extends State<MyHomePage> with WindowListener {
         if (_start == 0) {
           setState(() {
             timer.cancel();
+            print("not_done");
+            exit(1);
           });
         } else {
           setState(() {
@@ -125,10 +136,10 @@ class _MyHomePageState extends State<MyHomePage> with WindowListener {
 
   @override
   void onWindowMove() {
-    windowManager.getPosition().then((value) => {
+    /*windowManager.getPosition().then((value) => {
           if (value != new Offset(width, height))
             {windowManager.setPosition(Offset(width, height))}
-        });
+        });*/
   }
 
   @override
@@ -140,25 +151,25 @@ class _MyHomePageState extends State<MyHomePage> with WindowListener {
         children: [
           Container(
             width: 350,
-            margin: EdgeInsets.fromLTRB(75, 0, 0, 0),
+            margin: const EdgeInsets.fromLTRB(75, 0, 0, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                    margin: EdgeInsets.all(10),
+                    margin: const EdgeInsets.only(right: 2),
                     child: Text(
                       task,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
                           color: Colors.white),
                     )),
                 Container(
-                    margin: EdgeInsets.all(10),
+                    margin: const EdgeInsets.only(left: 2),
                     child: Text(
                       "${(_start / 60).toInt()}:" +
                           "${_start % 60}".padLeft(2, "0"),
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w300,
                           color: Colors.white),
@@ -167,52 +178,15 @@ class _MyHomePageState extends State<MyHomePage> with WindowListener {
             ),
           ),
           Container(
-              margin: EdgeInsets.all(10),
+              margin: const EdgeInsets.all(10),
               child: AdwButton(
-                  child: Text(
+                  onPressed: (() => {print("done"), exit(0)}),
+                  child: const Text(
                     "✓",
                     style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                  onPressed: (() => {exit(0)}))),
+                  ))),
         ],
       ),
     );
-    /*return AdwScaffold(
-      body: Column(
-        children: [Text("$width : $height")],
-      ),
-      actions: AdwActions().bitsdojo,
-      flap: (isDrawer) => AdwSidebar(
-        currentIndex: _currentIndex,
-        isDrawer: isDrawer,
-        children: const [
-          AdwSidebarItem(
-            label: 'Welcome',
-          ),
-          AdwSidebarItem(
-            label: 'Counter',
-          ),
-          AdwSidebarItem(
-            label: 'Lists',
-          ),
-          AdwSidebarItem(
-            label: 'Avatar',
-          ),
-          AdwSidebarItem(
-            label: 'Flap',
-          ),
-          AdwSidebarItem(
-            label: 'View Switcher',
-          ),
-          AdwSidebarItem(
-            label: 'Settings',
-          ),
-          AdwSidebarItem(
-            label: 'Style Classes',
-          )
-        ],
-        onSelected: (index) => setState(() => _currentIndex = index),
-      ),
-    );*/
   }
 }
